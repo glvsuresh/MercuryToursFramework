@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="MercuryTours Suite" parallel="false">
+	<parameter name="sBrowserName" value="Chrome"/>
+	<parameter name="sURL" value="http://newtours.demoaut.com/"/>
+	<!--<test name="Launching Application">
+	    <classes>
+	        <class name="com.training.mercuryTours.utils.CommonLib">
+	            <methods>
+	                <include name="openBrowser"/>
+	                <include name="navigateToURL"/>
+	            </methods>
+	        </class>
+	    </classes>
+	</test>-->
+	<test name="Logging To MercuryTours Application">
+		<parameter name="sUserName" value="mercury" />
+		<parameter name="sPassword" value="mercury" />
+		<classes>
+			<class name="com.training.mercuryTours.testcases.Login" />
+		</classes>
+	</test>
+	<test name="Searching for Flights">
+		<parameter name="sPasscount" value="2" />
+		<parameter name="sDeparture" value="London" />
+		<parameter name="sTravelDt" value="17" />
+		<parameter name="sArrival" value="Paris" />
+		<parameter name="sRetnDate" value="30" />
+		<parameter name="sAirLinesName" value="Unified Airlines" />
+		<classes>
+			<class name="com.training.mercuryTours.testcases.FindFlights" />
+		</classes>
+	</test>
+	<test name="Selecting Flights">
+		<parameter name="sDeptAirlines" value="Unified Airlines 363" />
+		<parameter name="sRtnAirlines" value="Unified Airlines 633" />
+		<classes>
+			<class name="com.training.mercuryTours.testcases.SelectFlights" />
+		</classes>
+	</test>
+	<test name="Enter Passenger Details">
+		<parameter name="sPassFN" value="Tester1FN" />
+		<parameter name="sPassLN" value="Tester1LN" />
+		<parameter name="sCreditNo" value="1234567891" />
+		<classes>
+			<class name="com.training.mercuryTours.testcases.BookFlight" />
+		</classes>
+	</test>
+	<test name="Logging Out Mercury Tours">
+		<classes>
+			<class name="com.training.mercuryTours.testcases.LogOut" />
+		</classes>
+	</test>
+	<test name="Closing Application">
+	    <classes>
+	        <class name="com.training.mercuryTours.utils.CommonLib">
+	            <methods>
+	                <include name="closeBrowser"/>
+	            </methods>
+	        </class>
+	    </classes>
+	</test>
+</suite> <!-- Suite -->

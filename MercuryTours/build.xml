@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<project name="MercuryTours" default="" basedir=".">
+	<!-- Project settings -->
+	<property name="project.title" value="MercuryTours" />
+	<property name="project.version" value="1.0" />
+	<property name="project.base.dir" value="${basedir}" />
+	<property name="src.dir" value="${project.base.dir}/src" />
+	<property name="build.dir" value="${project.base.dir}/build" />
+	<property name="vendor.dir" value="${project.base.dir}/lib" />
+	<property name="project.drivers" value="${project.base.dir}/drivers" />
+	<property name="testng.reports.dir" value="${project.base.dir}/reports" />
+
+	<tstamp>
+		<format property="dateversion" pattern="yyyy.MM.dd.HH:mm:ss" />
+		<format property="time.stamp" pattern="yyyy-MM-dd_HH-mm-ss aa_"/>
+	</tstamp>
+	<property name="testng.reports.dir" value="${testng.reports.dir}/${time.stamp}" />
+
+	<path id="class.path">
+		<pathelement location="${build.dir}"/>
+		<fileset dir="${vendor.dir}" includes="*.jar" />
+	</path>
+
+	<!-- cleaning the destination folders -->
+	<target name="clean">
+		<echo message="deleting existing build directory"/>
+		<delete dir="${build.dir}"/>
+		<echo message="deleting existing reports directory"/>
+		<delete dir="${testng.reports.dir}" />
+	</target>
+
+	<target name="makedir">
+		<echo message="making directories..." />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${testng.reports.dir}" />
+	</target>
+
+	<target name="reports-dir-create" depends="reports-dir-check" unless="reports.dir.exists">
+		<echo message = "${reports.dir} missing" />
+		<mkdir dir="${testng.reports.dir}"/>
+	</target>
+
+	<!-- reports-dir-check -->
+	<target name="reports-dir-check" >
+		<condition property="reports.dir.exists">
+			<available file="${testng.reports.dir}" type="dir"/>
+		</condition>
+	</target>
+
+	<!-- Compiles the java code -->
+	<target name="compile" depends="clean, makedir">
+		<echo message="compiling..." />
+		<javac debug="true" includeantruntime="true" srcdir="${src.dir}" destdir="${build.dir}" classpathref="class.path"/>
+		<taskdef name="testng" classname="org.testng.TestNGAntTask" classpathref="class.path" />
+	</target>
+
+	<target name="runtestng" depends="compile">
+		<testng outputdir="${testng.reports.dir}" suitename="MercuryTours Suite" classpathref="class.path" haltonfailure="false" haltonskipped="false" failureProperty="testsFailed">
+			<xmlfileset dir="${project.base.dir}/src/" includes="testng.xml"/>
+		</testng>
+	</target>
+	
+    <!-- generate testng xslt report-->
+	<target name="maketestngxsltreport" depends="runtestng">
+		<mkdir dir="${testng.reports.dir}/testng-xslt"/>
+		<xslt in="${testng.reports.dir}/testng-results.xml" style="src/xslt/testng-results.xsl" out="${testng.reports.dir}/testng-xslt/index.html" classpathref="class.path" processor="SaxonLiaison">
+			<param name="testNgXslt.outputDir" expression="${testng.reports.dir}/testng-xslt/"/>
+			<param name="testNgXslt.sortTestCaseLinks" expression="true"/>
+			<param name="testNgXslt.testDetailsFilter" expression="FAIL,SKIP,PASS,CONF,BY_CLASS"/>
+			<param name="testNgXslt.showRuntimeTotals" expression="true"/>
+			<param name="testNgXslt.reportTitle" expression="MercuryTours AutomationSuite"/>
+		</xslt>
+	</target>
+
+	<target name="generatestatus">
+		<fail message="One or more Automation tests failed! Please check the logs" if="testsFailed" />
+	</target>
+
+	<target name="ViewReport" depends="maketestngxsltreport">
+		<exec executable="${browser}" spawn="yes">
+			<arg line="'file:///${testng.reports.dir}/index.html'" />
+		</exec>
+	</target>
+	
+</project>
