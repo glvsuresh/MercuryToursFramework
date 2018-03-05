@@ -19,6 +19,7 @@ public class FindFlights extends CommonLib {
 	{
 		try
 		{
+			System.out.println("Starting Searching flights");
 			WebElement oPassLstBox=oBrowser.findElement(By.name("passCount"));
 			selectValFromListbox(oPassLstBox, sPasscount);
 			WebElement oDepart=oBrowser.findElement(By.name("fromPort"));
